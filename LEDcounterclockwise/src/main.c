@@ -2,7 +2,9 @@
 #include "stm32f4xx.h"
 #include "stm32f4_discovery.h"
 //#include <stdio.h>
-
+/**
+ * sfsdgfsdfsd
+ */
 void msDelay(uint32_t msTime);
 GPIO_InitTypeDef GPIO_LEDgreen;
 GPIO_InitTypeDef GPIO_LEDred;
@@ -17,7 +19,7 @@ int main(void)
 {
 
   RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOD, ENABLE);
-
+/////////////////////////////////////////////////
 
 GPIO_LEDgreen.GPIO_Pin = GPIO_Pin_12;
 GPIO_LEDgreen.GPIO_Mode = GPIO_Mode_OUT;
