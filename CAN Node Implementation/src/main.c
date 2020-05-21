@@ -63,6 +63,21 @@ void PIN_Configuration(void)
 	GPIO_Config.GPIO_PuPd = GPIO_PuPd_NOPULL;
 	GPIO_Config.GPIO_Speed = GPIO_Speed_25MHz;
 	GPIO_Init(GPIOD, &GPIO_Config);
+	//only for testing purposes: will quickly switch on and off each time the user btn is pressed
+	GPIO_InitTypeDef GPIO_LEDblue;
+	GPIO_LEDblue.GPIO_Pin = GPIO_Pin_15;
+	GPIO_LEDblue.GPIO_Mode = GPIO_Mode_OUT;
+	GPIO_LEDblue.GPIO_OType = GPIO_OType_PP;
+	GPIO_LEDblue.GPIO_Speed = GPIO_Speed_50MHz ;
+	GPIO_Init(GPIOD,&GPIO_LEDblue);
+
+		//only for testing purposes: will turn on and off each time can1 receives msgid 0x42
+		GPIO_InitTypeDef GPIO_LEDorange;
+		GPIO_LEDorange.GPIO_Pin = GPIO_Pin_13;
+		GPIO_LEDorange.GPIO_Mode = GPIO_Mode_OUT;
+		GPIO_LEDorange.GPIO_OType = GPIO_OType_PP;
+		GPIO_LEDorange.GPIO_Speed = GPIO_Speed_50MHz ;
+		GPIO_Init(GPIOD,&GPIO_LEDorange);
 
 
 	// GPIO configuration for the can:
@@ -101,6 +116,7 @@ void CAN_Configuration(void)
 	CAN_Config.CAN_BS1 = CAN_BS1_12tq;
 	CAN_Config.CAN_BS2 = CAN_BS2_5tq;
 	CAN_Config.CAN_Prescaler = 16;
+	CAN_Config.CAN_Mode = 0x01;
 	CAN_Init(CAN1, &CAN_Config);
 
 	//Creating a filter which enables the reception of messages
@@ -175,14 +191,30 @@ void EXTI0_IRQHandler(void)
 		Send.DLC = 1;
 		Send.RTR = CAN_RTR_Data;
 
-		Send.Data[0] = 00000111;
+		Send.Data[0] = 0x007;
 		CAN_Transmit(CAN1, &Send);
 
-		// Switch on the LED
-		// GPIO_ToggleBits(GPIOD, GPIO_Pin_12);
-		GPIO_WriteBit(GPIOD, GPIO_Pin_12, Bit_SET);
-		msDelay(1000);
-		GPIO_WriteBit(GPIOD, GPIO_Pin_12, Bit_RESET);
+		// Switch on the BLUE LED
+		GPIO_WriteBit(GPIOD, GPIO_Pin_15, Bit_SET);
+		msDelay(500);
+		GPIO_WriteBit(GPIOD, GPIO_Pin_15, Bit_RESET);
+
+			/*
+		// only for TESTING Purposes when CAN LOOPBACK Mode is enabled
+				Send.IDE = CAN_Id_Standard;
+				Send.StdId = 0x42;
+				Send.ExtId = 0;
+				Send.DLC = 4;
+				Send.RTR = CAN_RTR_Data;
+
+				Send.Data[0] = 0x007;
+				Send.Data[1] = 0x049;
+				Send.Data[2] = 0x0BA;
+				Send.Data[3] = 0x015;
+				//Send.Data[4] = 0x03C;
+				//*/
+		CAN_Transmit(CAN1,&Send);
+
 		/* Clear interrupt flag */
 		EXTI_ClearITPendingBit(EXTI_Line0);
 		}
@@ -195,9 +227,9 @@ void CAN1_RX0_IRQHandler(void)
 	CanTxMsg Send;
 
 	uint8_t counter;
-	uint16_t large = 0x00;
+	uint16_t largest = 0x00;
 
-	// Getting message:
+	// checking if a message is received:
 	if(SET != CAN_GetFlagStatus(CAN1, CAN_FLAG_FMP0))
 	{
 	// Wait until status is set:
@@ -205,7 +237,8 @@ void CAN1_RX0_IRQHandler(void)
 	}
 
 	CAN_Receive(CAN1, CAN_FIFO0, &Receive);
-
+	GPIO_ToggleBits(GPIOD, GPIO_Pin_12);
+	msDelay(500);
 	if( Receive.StdId== 0x42)
 	{
 			// receiving message:
@@ -218,19 +251,35 @@ void CAN1_RX0_IRQHandler(void)
 			/// Find the largest byte in the message:
 			for(counter = 0; counter< Receive.DLC; counter++)
 			{
-				if (Receive.Data[counter]> large)
+				if (Receive.Data[counter]> largest)
 				{
-					large = Receive.Data[counter];
+					largest = Receive.Data[counter];
 				}
 			}
 	           //Send the message
-			Send.Data[0] = large;
+			Send.Data[0] = largest;
 			CAN_Transmit(CAN1, &Send);
-                // Switch on the LED
-			//GPIO_ToggleBits(GPIOD, GPIO_Pin_12);
-			 GPIO_WriteBit(GPIOD, GPIO_Pin_12, Bit_SET);
-				  msDelay(1000);
-				 GPIO_WriteBit(GPIOD, GPIO_Pin_12, Bit_RESET);
+                // Switch on the orange LED
+			 GPIO_WriteBit(GPIOD, GPIO_Pin_13, Bit_SET);
+			 msDelay(500);
+			 GPIO_WriteBit(GPIOD, GPIO_Pin_13, Bit_RESET);
 	}
+		// only for TESTING Purposes when CAN LOOPBACK Mode is enabled
+				///*
+	else{
+				 	 	Send.IDE = CAN_Id_Standard;
+						Send.StdId = 0x42;
+						Send.ExtId = 0;
+						Send.DLC = 4;
+						Send.RTR = CAN_RTR_Data;
+
+						Send.Data[0] = 0x007;
+						Send.Data[1] = 0x049;
+						Send.Data[2] = 0x015;
+						Send.Data[3] = 0x0BA;
+				CAN_Transmit(CAN1,&Send);
+				}
+				//*/
+
 
 }
