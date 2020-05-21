@@ -23,9 +23,9 @@ Idx Name          Size      VMA       LMA       File off  Algn
                   ALLOC
   9 .ARM.attributes 00000030  00000000  00000000  000114a4  2**0
                   CONTENTS, READONLY
- 10 .debug_info   00003d3d  00000000  00000000  000114d4  2**0
+ 10 .debug_info   00003d3c  00000000  00000000  000114d4  2**0
                   CONTENTS, READONLY, DEBUGGING
- 11 .debug_abbrev 00000dfa  00000000  00000000  00015211  2**0
+ 11 .debug_abbrev 00000dfa  00000000  00000000  00015210  2**0
                   CONTENTS, READONLY, DEBUGGING
  12 .debug_aranges 000004d0  00000000  00000000  00016010  2**3
                   CONTENTS, READONLY, DEBUGGING
@@ -33,9 +33,9 @@ Idx Name          Size      VMA       LMA       File off  Algn
                   CONTENTS, READONLY, DEBUGGING
  14 .debug_line   00001d5c  00000000  00000000  00016918  2**0
                   CONTENTS, READONLY, DEBUGGING
- 15 .debug_str    00001d05  00000000  00000000  00018674  2**0
+ 15 .debug_str    00001d07  00000000  00000000  00018674  2**0
                   CONTENTS, READONLY, DEBUGGING
- 16 .comment      0000007c  00000000  00000000  0001a379  2**0
+ 16 .comment      0000007c  00000000  00000000  0001a37b  2**0
                   CONTENTS, READONLY
  17 .debug_frame  000012fc  00000000  00000000  0001a3f8  2**2
                   CONTENTS, READONLY, DEBUGGING
@@ -2411,7 +2411,7 @@ void SYSCFG_EXTILineConfig(uint8_t EXTI_PortSourceGPIOx, uint8_t EXTI_PinSourcex
 
 08000eb4 <msDelay>:
 void CAN_Configuration(void);
-void CAN_Intteruption(void);
+void CANEXT_Intteruption(void);
 void msDelay(uint32_t msTime);
 
 void msDelay(uint32_t msTime)
@@ -2456,8 +2456,8 @@ int main(void)
  8000eec:	f000 f806 	bl	8000efc <PIN_Configuration>
 	CAN_Configuration();
  8000ef0:	f000 f86c 	bl	8000fcc <CAN_Configuration>
-	CAN_Intteruption();
- 8000ef4:	f000 f8a4 	bl	8001040 <CAN_Intteruption>
+	CANEXT_Intteruption();
+ 8000ef4:	f000 f8a4 	bl	8001040 <CANEXT_Intteruption>
     Wait For Interrupt is a hint instruction that suspends execution
     until one of a number of events occurs.
  */
@@ -2704,11 +2704,11 @@ void CAN_Configuration(void)
  800103a:	bf00      	nop
  800103c:	40006400 	.word	0x40006400
 
-08001040 <CAN_Intteruption>:
+08001040 <CANEXT_Intteruption>:
 
 // Function for CAN1 & EXTI0 Interrupt:
 
-void CAN_Intteruption(void)
+void CANEXT_Intteruption(void)
 {
  8001040:	b580      	push	{r7, lr}
  8001042:	b084      	sub	sp, #16
@@ -2717,7 +2717,7 @@ void CAN_Intteruption(void)
 	CAN_ITConfig(CAN1, CAN_IT_FMP0, ENABLE);
  8001046:	2201      	movs	r2, #1
  8001048:	2102      	movs	r1, #2
- 800104a:	481a      	ldr	r0, [pc, #104]	; (80010b4 <CAN_Intteruption+0x74>)
+ 800104a:	481a      	ldr	r0, [pc, #104]	; (80010b4 <CANEXT_Intteruption+0x74>)
  800104c:	f7ff fc63 	bl	8000916 <CAN_ITConfig>
 
 	// Configuration CAN interrupt control:

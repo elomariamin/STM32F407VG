@@ -4,7 +4,7 @@
  *      Group: A
  *      Member Nr.: 7
  *    Author: Mohamed Amine, El Omari Alaoui
- *    SystemCoreClock = 72 MHz
+ *    SystemCoreClock = 168 MHz
  */
 
 
@@ -20,7 +20,7 @@
 
 void PIN_Configuration(void);
 void CAN_Configuration(void);
-void CAN_Intteruption(void);
+void CANEXT_Intteruption(void);
 void msDelay(uint32_t msTime);
 
 void msDelay(uint32_t msTime)
@@ -37,7 +37,7 @@ int main(void)
 	// Call programmed functions:
 	PIN_Configuration();
 	CAN_Configuration();
-	CAN_Intteruption();
+	CANEXT_Intteruption();
 
   while (1)
   {
@@ -138,7 +138,7 @@ void CAN_Configuration(void)
 
 // Function for CAN1 & EXTI0 Interrupt:
 
-void CAN_Intteruption(void)
+void CANEXT_Intteruption(void)
 {
 	// Enable Can interrupt:
 	CAN_ITConfig(CAN1, CAN_IT_FMP0, ENABLE);
