@@ -1,5 +1,5 @@
 /* 25.05.2020 Automotive Mechatronics Lab_1
- *
+ *LOOPBACKMODE
  * Controller: STM32F407VG
  *      Group: A
  *      Member Nr.: 7
@@ -65,13 +65,21 @@ void PIN_Configuration(void)
 	GPIO_Init(GPIOD, &GPIO_Config);
 
 
-	//only for testing purposes
+	//only for testing purposes: will quickly switch on and off each time the user btn is pressed
 	GPIO_InitTypeDef GPIO_LEDblue;
 	GPIO_LEDblue.GPIO_Pin = GPIO_Pin_15;
 	GPIO_LEDblue.GPIO_Mode = GPIO_Mode_OUT;
 	GPIO_LEDblue.GPIO_OType = GPIO_OType_PP;
 	GPIO_LEDblue.GPIO_Speed = GPIO_Speed_50MHz ;
 	GPIO_Init(GPIOD,&GPIO_LEDblue);
+
+	//only for testing purposes: will turn on and off each time can1 receives msgid 0x42
+	GPIO_InitTypeDef GPIO_LEDorange;
+		GPIO_LEDorange.GPIO_Pin = GPIO_Pin_13;
+		GPIO_LEDorange.GPIO_Mode = GPIO_Mode_OUT;
+		GPIO_LEDorange.GPIO_OType = GPIO_OType_PP;
+		GPIO_LEDorange.GPIO_Speed = GPIO_Speed_50MHz ;
+		GPIO_Init(GPIOD,&GPIO_LEDorange);
 
 
 	// GPIO configuration for the can:
@@ -189,10 +197,9 @@ void EXTI0_IRQHandler(void)
 		CAN_Transmit(CAN1, &Send);
 
 		// Switch on the LED
-		// GPIO_ToggleBits(GPIOD, GPIO_Pin_12);
-		GPIO_WriteBit(GPIOD, GPIO_Pin_12, Bit_SET);
-		msDelay(1000);
-		GPIO_WriteBit(GPIOD, GPIO_Pin_12, Bit_RESET);
+		GPIO_WriteBit(GPIOD, GPIO_Pin_15, Bit_SET);
+		msDelay(500);
+		GPIO_WriteBit(GPIOD, GPIO_Pin_15, Bit_RESET);
 
 		Send.IDE = CAN_Id_Standard;
 				Send.StdId = 0x42;
@@ -225,7 +232,8 @@ void CAN1_RX0_IRQHandler(void)
 	}
 
 	CAN_Receive(CAN1, CAN_FIFO0, &Receive);
-
+	GPIO_ToggleBits(GPIOD, GPIO_Pin_12);
+	msDelay(500);
 	if( Receive.StdId== 0x42)
 	{
 			// receiving message:
@@ -251,9 +259,9 @@ void CAN1_RX0_IRQHandler(void)
 			/*GPIO_WriteBit(GPIOD, GPIO_Pin_12, Bit_SET);
 			msDelay(1000);
 			GPIO_WriteBit(GPIOD, GPIO_Pin_12, Bit_RESET);*/
-			GPIO_WriteBit(GPIOD, GPIO_Pin_15, Bit_SET);
-			msDelay(1000);
-			GPIO_WriteBit(GPIOD, GPIO_Pin_15, Bit_RESET);
+			GPIO_WriteBit(GPIOD, GPIO_Pin_13, Bit_SET);
+			msDelay(500);
+			GPIO_WriteBit(GPIOD, GPIO_Pin_13, Bit_RESET);
 
 	}
 
