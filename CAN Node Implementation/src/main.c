@@ -25,7 +25,9 @@ void msDelay(uint32_t msTime);
 
 void msDelay(uint32_t msTime)
 {
-	for(uint32_t i=0; i<msTime*4000;i++);
+	//HSE [8MHz] divided by 4 (necessary time to run one "for" loop) = 2MHz
+	//Thus the "for" loop should be run 2000 to make a delay of 1ms [1kHz]"
+	for(uint32_t i=0; i<msTime*2000;i++);
 }
 
 int main(void)
@@ -199,7 +201,7 @@ void EXTI0_IRQHandler(void)
 		msDelay(500);
 		GPIO_WriteBit(GPIOD, GPIO_Pin_15, Bit_RESET);
 
-			/*
+			///*
 		// only for TESTING Purposes when CAN LOOPBACK Mode is enabled
 				Send.IDE = CAN_Id_Standard;
 				Send.StdId = 0x42;
@@ -265,7 +267,7 @@ void CAN1_RX0_IRQHandler(void)
 			 GPIO_WriteBit(GPIOD, GPIO_Pin_13, Bit_RESET);
 	}
 		// only for TESTING Purposes when CAN LOOPBACK Mode is enabled
-				///*
+				/*
 	else{
 				 	 	Send.IDE = CAN_Id_Standard;
 						Send.StdId = 0x42;
