@@ -2510,8 +2510,8 @@ void PIN_Configuration(void)
 	GPIO_Config.GPIO_PuPd = GPIO_PuPd_NOPULL;
  8000f20:	2300      	movs	r3, #0
  8000f22:	77fb      	strb	r3, [r7, #31]
-	GPIO_Config.GPIO_Speed = GPIO_Speed_25MHz;
- 8000f24:	2301      	movs	r3, #1
+	GPIO_Config.GPIO_Speed = GPIO_Speed_50MHz;
+ 8000f24:	2302      	movs	r3, #2
  8000f26:	777b      	strb	r3, [r7, #29]
 	GPIO_Init(GPIOD, &GPIO_Config);
  8000f28:	f107 0318 	add.w	r3, r7, #24
@@ -2537,22 +2537,21 @@ void PIN_Configuration(void)
  8000f4a:	4619      	mov	r1, r3
  8000f4c:	481d      	ldr	r0, [pc, #116]	; (8000fc4 <PIN_Configuration+0xc8>)
  8000f4e:	f7ff fe0d 	bl	8000b6c <GPIO_Init>
-
-		//only for testing purposes: will turn on and off each time can1 receives msgid 0x42
-		GPIO_InitTypeDef GPIO_LEDorange;
-		GPIO_LEDorange.GPIO_Pin = GPIO_Pin_13;
+	//only for testing purposes: will turn on and off each time can1 receives msgid 0x42
+	GPIO_InitTypeDef GPIO_LEDorange;
+	GPIO_LEDorange.GPIO_Pin = GPIO_Pin_13;
  8000f52:	f44f 5300 	mov.w	r3, #8192	; 0x2000
  8000f56:	60bb      	str	r3, [r7, #8]
-		GPIO_LEDorange.GPIO_Mode = GPIO_Mode_OUT;
+	GPIO_LEDorange.GPIO_Mode = GPIO_Mode_OUT;
  8000f58:	2301      	movs	r3, #1
  8000f5a:	733b      	strb	r3, [r7, #12]
-		GPIO_LEDorange.GPIO_OType = GPIO_OType_PP;
+	GPIO_LEDorange.GPIO_OType = GPIO_OType_PP;
  8000f5c:	2300      	movs	r3, #0
  8000f5e:	73bb      	strb	r3, [r7, #14]
-		GPIO_LEDorange.GPIO_Speed = GPIO_Speed_50MHz ;
+	GPIO_LEDorange.GPIO_Speed = GPIO_Speed_50MHz ;
  8000f60:	2302      	movs	r3, #2
  8000f62:	737b      	strb	r3, [r7, #13]
-		GPIO_Init(GPIOD,&GPIO_LEDorange);
+	GPIO_Init(GPIOD,&GPIO_LEDorange);
  8000f64:	f107 0308 	add.w	r3, r7, #8
  8000f68:	4619      	mov	r1, r3
  8000f6a:	4816      	ldr	r0, [pc, #88]	; (8000fc4 <PIN_Configuration+0xc8>)
@@ -2580,7 +2579,7 @@ void PIN_Configuration(void)
  8000f88:	4619      	mov	r1, r3
  8000f8a:	480e      	ldr	r0, [pc, #56]	; (8000fc4 <PIN_Configuration+0xc8>)
  8000f8c:	f7ff fdee 	bl	8000b6c <GPIO_Init>
-// Connection between can and pin:
+	// Connection between can and pin:
 	GPIO_PinAFConfig(GPIOD, GPIO_PinSource0, GPIO_AF_CAN1);
  8000f90:	2209      	movs	r2, #9
  8000f92:	2100      	movs	r1, #0
@@ -2593,17 +2592,17 @@ void PIN_Configuration(void)
  8000fa0:	f7ff fe9c 	bl	8000cdc <GPIO_PinAFConfig>
 
 	GPIO_InitTypeDef GPIOA_Config;
-		// GPIO configuration for the User Button:
-		    GPIOA_Config.GPIO_Mode = GPIO_Mode_IN;
+	// GPIO configuration for the User Button:
+	GPIOA_Config.GPIO_Mode = GPIO_Mode_IN;
  8000fa4:	2300      	movs	r3, #0
  8000fa6:	713b      	strb	r3, [r7, #4]
-			GPIOA_Config.GPIO_Pin = GPIO_Pin_0;
+	GPIOA_Config.GPIO_Pin = GPIO_Pin_0;
  8000fa8:	2301      	movs	r3, #1
  8000faa:	603b      	str	r3, [r7, #0]
-			GPIOA_Config.GPIO_PuPd = GPIO_PuPd_DOWN;
+	GPIOA_Config.GPIO_PuPd = GPIO_PuPd_DOWN;
  8000fac:	2302      	movs	r3, #2
  8000fae:	71fb      	strb	r3, [r7, #7]
-			GPIO_Init(GPIOA, &GPIOA_Config);
+	GPIO_Init(GPIOA, &GPIOA_Config);
  8000fb0:	463b      	mov	r3, r7
  8000fb2:	4619      	mov	r1, r3
  8000fb4:	4804      	ldr	r0, [pc, #16]	; (8000fc8 <PIN_Configuration+0xcc>)
@@ -2740,57 +2739,57 @@ void CANEXT_Intteruption(void)
  8001064:	4618      	mov	r0, r3
  8001066:	f7ff f8af 	bl	80001c8 <NVIC_Init>
 
-	/* Enable clock for SYSCFG */
-	    RCC_APB2PeriphClockCmd(RCC_APB2Periph_SYSCFG, ENABLE);
+	// Enable clock for SYSCFG
+	RCC_APB2PeriphClockCmd(RCC_APB2Periph_SYSCFG, ENABLE);
  800106a:	2101      	movs	r1, #1
  800106c:	f44f 4080 	mov.w	r0, #16384	; 0x4000
  8001070:	f7ff febe 	bl	8000df0 <RCC_APB2PeriphClockCmd>
 
-	    /* Tell system that you will use PA0 for EXTI_Line0 */
-	    	SYSCFG_EXTILineConfig(EXTI_PortSourceGPIOA, EXTI_PinSource0);
+	// Tell system that you will use PA0 for EXTI_Line0
+	SYSCFG_EXTILineConfig(EXTI_PortSourceGPIOA, EXTI_PinSource0);
  8001074:	2100      	movs	r1, #0
  8001076:	2000      	movs	r0, #0
  8001078:	f7ff feda 	bl	8000e30 <SYSCFG_EXTILineConfig>
 
-	    	EXTI_InitTypeDef EXTI_Config;
-	    	/* PA0 is connected to EXTI_Line0 */
-	    	EXTI_Config.EXTI_Line = EXTI_Line0;
+	EXTI_InitTypeDef EXTI_Config;
+	// PA0 is connected to EXTI_Line0
+	EXTI_Config.EXTI_Line = EXTI_Line0;
  800107c:	2301      	movs	r3, #1
  800107e:	607b      	str	r3, [r7, #4]
-	    	/* Enable interrupt */
-	    	EXTI_Config.EXTI_LineCmd = ENABLE;
+	// Enable interrupt
+	EXTI_Config.EXTI_LineCmd = ENABLE;
  8001080:	2301      	movs	r3, #1
  8001082:	72bb      	strb	r3, [r7, #10]
-	    	/* Interrupt mode */
-	    	EXTI_Config.EXTI_Mode = EXTI_Mode_Interrupt;
+	// Interrupt mode
+	EXTI_Config.EXTI_Mode = EXTI_Mode_Interrupt;
  8001084:	2300      	movs	r3, #0
  8001086:	723b      	strb	r3, [r7, #8]
-	    	/* Triggers on rising and falling edge */
-	    	EXTI_Config.EXTI_Trigger = EXTI_Trigger_Rising_Falling;
- 8001088:	2310      	movs	r3, #16
+   	// Triggers on rising and falling edge
+   	EXTI_Config.EXTI_Trigger = EXTI_Trigger_Rising;
+ 8001088:	2308      	movs	r3, #8
  800108a:	727b      	strb	r3, [r7, #9]
-	    	/* Add to EXTI */
-	    	EXTI_Init(&EXTI_Config);
+ 	// Add to EXTI */
+	EXTI_Init(&EXTI_Config);
  800108c:	1d3b      	adds	r3, r7, #4
  800108e:	4618      	mov	r0, r3
  8001090:	f7ff fcc6 	bl	8000a20 <EXTI_Init>
 
 	// Configuration EXTI0 interrupt control:
-		NVIC_InitTypeDef NVICEXTI0_Config;
+	NVIC_InitTypeDef NVICEXTI0_Config;
 
-		NVICEXTI0_Config.NVIC_IRQChannel = EXTI0_IRQn ;
+	NVICEXTI0_Config.NVIC_IRQChannel = EXTI0_IRQn ;
  8001094:	2306      	movs	r3, #6
  8001096:	703b      	strb	r3, [r7, #0]
-		NVICEXTI0_Config.NVIC_IRQChannelCmd = ENABLE;
+	NVICEXTI0_Config.NVIC_IRQChannelCmd = ENABLE;
  8001098:	2301      	movs	r3, #1
  800109a:	70fb      	strb	r3, [r7, #3]
-		NVICEXTI0_Config.NVIC_IRQChannelPreemptionPriority = 0x00;
+	NVICEXTI0_Config.NVIC_IRQChannelPreemptionPriority = 0x00;
  800109c:	2300      	movs	r3, #0
  800109e:	707b      	strb	r3, [r7, #1]
-		NVICEXTI0_Config.NVIC_IRQChannelSubPriority = 0x00;
+	NVICEXTI0_Config.NVIC_IRQChannelSubPriority = 0x00;
  80010a0:	2300      	movs	r3, #0
  80010a2:	70bb      	strb	r3, [r7, #2]
-		NVIC_Init(&NVICEXTI0_Config);
+	NVIC_Init(&NVICEXTI0_Config);
  80010a4:	463b      	mov	r3, r7
  80010a6:	4618      	mov	r0, r3
  80010a8:	f7ff f88e 	bl	80001c8 <NVIC_Init>
@@ -2860,32 +2859,32 @@ void EXTI0_IRQHandler(void)
 
 			///*
 		// only for TESTING Purposes when CAN LOOPBACK Mode is enabled
-				Send.IDE = CAN_Id_Standard;
+		Send.IDE = CAN_Id_Standard;
  800110e:	2300      	movs	r3, #0
  8001110:	733b      	strb	r3, [r7, #12]
-				Send.StdId = 0x42;
+		Send.StdId = 0x42;
  8001112:	2342      	movs	r3, #66	; 0x42
  8001114:	607b      	str	r3, [r7, #4]
-				Send.ExtId = 0;
+		Send.ExtId = 0;
  8001116:	2300      	movs	r3, #0
  8001118:	60bb      	str	r3, [r7, #8]
-				Send.DLC = 4;
+		Send.DLC = 4;
  800111a:	2304      	movs	r3, #4
  800111c:	73bb      	strb	r3, [r7, #14]
-				Send.RTR = CAN_RTR_Data;
+		Send.RTR = CAN_RTR_Data;
  800111e:	2300      	movs	r3, #0
  8001120:	737b      	strb	r3, [r7, #13]
 
-				Send.Data[0] = 0x007;
+		Send.Data[0] = 0x007;
  8001122:	2307      	movs	r3, #7
  8001124:	73fb      	strb	r3, [r7, #15]
-				Send.Data[1] = 0x049;
+		Send.Data[1] = 0x049;
  8001126:	2349      	movs	r3, #73	; 0x49
  8001128:	743b      	strb	r3, [r7, #16]
-				Send.Data[2] = 0x0BA;
+		Send.Data[2] = 0x0BA;
  800112a:	23ba      	movs	r3, #186	; 0xba
  800112c:	747b      	strb	r3, [r7, #17]
-				Send.Data[3] = 0x015;
+		Send.Data[3] = 0x015;
  800112e:	2315      	movs	r3, #21
  8001130:	74bb      	strb	r3, [r7, #18]
 				//Send.Data[4] = 0x03C;
@@ -3006,7 +3005,7 @@ void CAN1_RX0_IRQHandler(void)
  80011ea:	d3e1      	bcc.n	80011b0 <CAN1_RX0_IRQHandler+0x5c>
 				}
 			}
-	           //Send the message
+	        //Send the message
 			Send.Data[0] = largest;
  80011ec:	8dbb      	ldrh	r3, [r7, #44]	; 0x2c
  80011ee:	b2db      	uxtb	r3, r3
@@ -3016,16 +3015,16 @@ void CAN1_RX0_IRQHandler(void)
  80011f4:	4619      	mov	r1, r3
  80011f6:	480d      	ldr	r0, [pc, #52]	; (800122c <CAN1_RX0_IRQHandler+0xd8>)
  80011f8:	f7ff fa01 	bl	80005fe <CAN_Transmit>
-                // Switch on the orange LED
-			 GPIO_WriteBit(GPIOD, GPIO_Pin_13, Bit_SET);
+            // Switch on the orange LED
+			GPIO_WriteBit(GPIOD, GPIO_Pin_13, Bit_SET);
  80011fc:	2201      	movs	r2, #1
  80011fe:	f44f 5100 	mov.w	r1, #8192	; 0x2000
  8001202:	480b      	ldr	r0, [pc, #44]	; (8001230 <CAN1_RX0_IRQHandler+0xdc>)
  8001204:	f7ff fd40 	bl	8000c88 <GPIO_WriteBit>
-			 msDelay(500);
+			msDelay(500);
  8001208:	f44f 70fa 	mov.w	r0, #500	; 0x1f4
  800120c:	f7ff fe52 	bl	8000eb4 <msDelay>
-			 GPIO_WriteBit(GPIOD, GPIO_Pin_13, Bit_RESET);
+			GPIO_WriteBit(GPIOD, GPIO_Pin_13, Bit_RESET);
  8001210:	2200      	movs	r2, #0
  8001212:	f44f 5100 	mov.w	r1, #8192	; 0x2000
  8001216:	4806      	ldr	r0, [pc, #24]	; (8001230 <CAN1_RX0_IRQHandler+0xdc>)
@@ -3033,11 +3032,11 @@ void CAN1_RX0_IRQHandler(void)
  800121c:	e000      	b.n	8001220 <CAN1_RX0_IRQHandler+0xcc>
 	 return;
  800121e:	bf00      	nop
+						Send.Data[2] = 0x015;
+						Send.Data[3] = 0x0BA;
 				CAN_Transmit(CAN1,&Send);
 				}
 				//*/
-
-
 }
  8001220:	3730      	adds	r7, #48	; 0x30
  8001222:	46bd      	mov	sp, r7

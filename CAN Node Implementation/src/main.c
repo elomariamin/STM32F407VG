@@ -63,7 +63,7 @@ void PIN_Configuration(void)
 	GPIO_Config.GPIO_OType = GPIO_OType_PP;
 	GPIO_Config.GPIO_Pin = GPIO_Pin_12;
 	GPIO_Config.GPIO_PuPd = GPIO_PuPd_NOPULL;
-	GPIO_Config.GPIO_Speed = GPIO_Speed_25MHz;
+	GPIO_Config.GPIO_Speed = GPIO_Speed_50MHz;
 	GPIO_Init(GPIOD, &GPIO_Config);
 	//only for testing purposes: will quickly switch on and off each time the user btn is pressed
 	GPIO_InitTypeDef GPIO_LEDblue;
@@ -72,14 +72,13 @@ void PIN_Configuration(void)
 	GPIO_LEDblue.GPIO_OType = GPIO_OType_PP;
 	GPIO_LEDblue.GPIO_Speed = GPIO_Speed_50MHz ;
 	GPIO_Init(GPIOD,&GPIO_LEDblue);
-
-		//only for testing purposes: will turn on and off each time can1 receives msgid 0x42
-		GPIO_InitTypeDef GPIO_LEDorange;
-		GPIO_LEDorange.GPIO_Pin = GPIO_Pin_13;
-		GPIO_LEDorange.GPIO_Mode = GPIO_Mode_OUT;
-		GPIO_LEDorange.GPIO_OType = GPIO_OType_PP;
-		GPIO_LEDorange.GPIO_Speed = GPIO_Speed_50MHz ;
-		GPIO_Init(GPIOD,&GPIO_LEDorange);
+	//only for testing purposes: will turn on and off each time can1 receives msgid 0x42
+	GPIO_InitTypeDef GPIO_LEDorange;
+	GPIO_LEDorange.GPIO_Pin = GPIO_Pin_13;
+	GPIO_LEDorange.GPIO_Mode = GPIO_Mode_OUT;
+	GPIO_LEDorange.GPIO_OType = GPIO_OType_PP;
+	GPIO_LEDorange.GPIO_Speed = GPIO_Speed_50MHz ;
+	GPIO_Init(GPIOD,&GPIO_LEDorange);
 
 
 	// GPIO configuration for the can:
@@ -89,16 +88,16 @@ void PIN_Configuration(void)
 	GPIO_Config.GPIO_PuPd = GPIO_PuPd_NOPULL;
 	GPIO_Config.GPIO_Speed = GPIO_Speed_25MHz;
 	GPIO_Init(GPIOD, &GPIO_Config);
-// Connection between can and pin:
+	// Connection between can and pin:
 	GPIO_PinAFConfig(GPIOD, GPIO_PinSource0, GPIO_AF_CAN1);
 	GPIO_PinAFConfig(GPIOD, GPIO_PinSource1, GPIO_AF_CAN1);
 
 	GPIO_InitTypeDef GPIOA_Config;
-		// GPIO configuration for the User Button:
-		    GPIOA_Config.GPIO_Mode = GPIO_Mode_IN;
-			GPIOA_Config.GPIO_Pin = GPIO_Pin_0;
-			GPIOA_Config.GPIO_PuPd = GPIO_PuPd_DOWN;
-			GPIO_Init(GPIOA, &GPIOA_Config);
+	// GPIO configuration for the User Button:
+	GPIOA_Config.GPIO_Mode = GPIO_Mode_IN;
+	GPIOA_Config.GPIO_Pin = GPIO_Pin_0;
+	GPIOA_Config.GPIO_PuPd = GPIO_PuPd_DOWN;
+	GPIO_Init(GPIOA, &GPIOA_Config);
 
 
 
@@ -152,32 +151,32 @@ void CANEXT_Intteruption(void)
 	NVICCAN_Config.NVIC_IRQChannelSubPriority = 1;
 	NVIC_Init(&NVICCAN_Config);
 
-	/* Enable clock for SYSCFG */
-	    RCC_APB2PeriphClockCmd(RCC_APB2Periph_SYSCFG, ENABLE);
+	// Enable clock for SYSCFG
+	RCC_APB2PeriphClockCmd(RCC_APB2Periph_SYSCFG, ENABLE);
 
-	    /* Tell system that you will use PA0 for EXTI_Line0 */
-	    	SYSCFG_EXTILineConfig(EXTI_PortSourceGPIOA, EXTI_PinSource0);
+	// Tell system that you will use PA0 for EXTI_Line0
+	SYSCFG_EXTILineConfig(EXTI_PortSourceGPIOA, EXTI_PinSource0);
 
-	    	EXTI_InitTypeDef EXTI_Config;
-	    	/* PA0 is connected to EXTI_Line0 */
-	    	EXTI_Config.EXTI_Line = EXTI_Line0;
-	    	/* Enable interrupt */
-	    	EXTI_Config.EXTI_LineCmd = ENABLE;
-	    	/* Interrupt mode */
-	    	EXTI_Config.EXTI_Mode = EXTI_Mode_Interrupt;
-	    	/* Triggers on rising and falling edge */
-	    	EXTI_Config.EXTI_Trigger = EXTI_Trigger_Rising_Falling;
-	    	/* Add to EXTI */
-	    	EXTI_Init(&EXTI_Config);
+	EXTI_InitTypeDef EXTI_Config;
+	// PA0 is connected to EXTI_Line0
+	EXTI_Config.EXTI_Line = EXTI_Line0;
+	// Enable interrupt
+	EXTI_Config.EXTI_LineCmd = ENABLE;
+	// Interrupt mode
+	EXTI_Config.EXTI_Mode = EXTI_Mode_Interrupt;
+   	// Triggers on rising and falling edge
+   	EXTI_Config.EXTI_Trigger = EXTI_Trigger_Rising;
+ 	// Add to EXTI */
+	EXTI_Init(&EXTI_Config);
 
 	// Configuration EXTI0 interrupt control:
-		NVIC_InitTypeDef NVICEXTI0_Config;
+	NVIC_InitTypeDef NVICEXTI0_Config;
 
-		NVICEXTI0_Config.NVIC_IRQChannel = EXTI0_IRQn ;
-		NVICEXTI0_Config.NVIC_IRQChannelCmd = ENABLE;
-		NVICEXTI0_Config.NVIC_IRQChannelPreemptionPriority = 0x00;
-		NVICEXTI0_Config.NVIC_IRQChannelSubPriority = 0x00;
-		NVIC_Init(&NVICEXTI0_Config);
+	NVICEXTI0_Config.NVIC_IRQChannel = EXTI0_IRQn ;
+	NVICEXTI0_Config.NVIC_IRQChannelCmd = ENABLE;
+	NVICEXTI0_Config.NVIC_IRQChannelPreemptionPriority = 0x00;
+	NVICEXTI0_Config.NVIC_IRQChannelSubPriority = 0x00;
+	NVIC_Init(&NVICEXTI0_Config);
 
 }
 
@@ -203,16 +202,16 @@ void EXTI0_IRQHandler(void)
 
 			///*
 		// only for TESTING Purposes when CAN LOOPBACK Mode is enabled
-				Send.IDE = CAN_Id_Standard;
-				Send.StdId = 0x42;
-				Send.ExtId = 0;
-				Send.DLC = 4;
-				Send.RTR = CAN_RTR_Data;
+		Send.IDE = CAN_Id_Standard;
+		Send.StdId = 0x42;
+		Send.ExtId = 0;
+		Send.DLC = 4;
+		Send.RTR = CAN_RTR_Data;
 
-				Send.Data[0] = 0x007;
-				Send.Data[1] = 0x049;
-				Send.Data[2] = 0x0BA;
-				Send.Data[3] = 0x015;
+		Send.Data[0] = 0x007;
+		Send.Data[1] = 0x049;
+		Send.Data[2] = 0x0BA;
+		Send.Data[3] = 0x015;
 				//Send.Data[4] = 0x03C;
 				//*/
 		CAN_Transmit(CAN1,&Send);
@@ -258,13 +257,13 @@ void CAN1_RX0_IRQHandler(void)
 					largest = Receive.Data[counter];
 				}
 			}
-	           //Send the message
+	        //Send the message
 			Send.Data[0] = largest;
 			CAN_Transmit(CAN1, &Send);
-                // Switch on the orange LED
-			 GPIO_WriteBit(GPIOD, GPIO_Pin_13, Bit_SET);
-			 msDelay(500);
-			 GPIO_WriteBit(GPIOD, GPIO_Pin_13, Bit_RESET);
+            // Switch on the orange LED
+			GPIO_WriteBit(GPIOD, GPIO_Pin_13, Bit_SET);
+			msDelay(500);
+			GPIO_WriteBit(GPIOD, GPIO_Pin_13, Bit_RESET);
 	}
 		// only for TESTING Purposes when CAN LOOPBACK Mode is enabled
 				/*
@@ -282,6 +281,4 @@ void CAN1_RX0_IRQHandler(void)
 				CAN_Transmit(CAN1,&Send);
 				}
 				//*/
-
-
 }
